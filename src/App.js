@@ -20,6 +20,7 @@ class App extends Component {
           >
             Learn React
           </a>
+          {/* Notification componentを埋め込む */}
           <Notification />
         </header>
       </div>

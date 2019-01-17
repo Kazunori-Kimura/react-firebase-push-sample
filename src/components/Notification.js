@@ -9,11 +9,6 @@ class Notification extends Component {
      * @type {String}
      */
     token: '',
-    /**
-     * 受信通知
-     * @type {String[]}
-     */
-    messages: [],
   };
 
   /**
@@ -22,7 +17,12 @@ class Notification extends Component {
    */
   initialized = false;
 
+  /**
+   * renderメソッドが呼ばれる前に実行される
+   * ライフサイクルメソッド
+   */
   componentWillMount() {
+    // FCM初期化処理
     this.initializeFCM();
   }
 
@@ -32,6 +32,9 @@ class Notification extends Component {
   initializeFCM = async () => {
     if (this.initialized) {
       // 初期化済みなら何もしない
+      // 通常はcomponentWillMountは一度しか呼ばれないが、
+      // react-router-domを使用した場合に画面遷移に伴って
+      // 複数回呼ばれることがあったので、フラグで管理しておく
       return;
     }
 
@@ -46,6 +49,8 @@ class Notification extends Component {
     // Firebaseのコンソール > 設定 > 全般 でアプリの種別からウェブアプリを選択すると
     // JavaScriptのスニペットが表示されるので環境変数 (.env) にコピペする
     const config = {
+      // Reactでは.envファイルに定義した環境変数'REACT_APP_XXX'をprocess.envから参照できる
+      // (トランスパイル時に置換される)
       apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
       authDomain: process.env.REACT_APP_FIREBASE_AUTHDOMAIN,
       databaseURL: process.env.REACT_APP_FIREBASE_DATABASEURL,
@@ -89,12 +94,17 @@ class Notification extends Component {
       console.log(payload);
     });
 
+    // 初期化済みフラグをセット
     this.initialized = true;
   };
 
+  /**
+   * コンポーネントの描画メソッド
+   */
   render() {
     const { token } = this.state;
 
+    // tokenを画面に表示する
     return (
       <div>FCM Token: {token}</div>
     );

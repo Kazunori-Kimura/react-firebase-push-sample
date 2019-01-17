@@ -9,22 +9,19 @@
 importScripts('https://www.gstatic.com/firebasejs/5.7.3/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/5.7.3/firebase-messaging.js');
 
-// Initialize the Firebase app in the service worker by passing in the
-// messagingSenderId.
 firebase.initializeApp({
   'messagingSenderId': '651317443326'
 });
 
-// Retrieve an instance of Firebase Messaging so that it can handle background
-// messages.
+// バックグラウンドメッセージを処理できるようにFirebase Messagingのインスタンスを取得します。
+// この一文がないとブラウザがアクティブなときでもPush通知を受信できません。
 const messaging = firebase.messaging();
 
-// messaging.onMessage(function(payload) {
-//   console.log('Message received. ', payload);
-//   // ...
-// });
-
-
+// サーバー側にPOSTするデータに `notification` が含まれている場合は
+// `setBackgroundMessageHandler` は呼ばれない。
+// `notification` をサーバー側で設定しない場合はここで通知のtitle, bodyを組み立てることになる。
+// => Firebase Cloud Messaging（FCM）でより簡単にWebブラウザにPush通知を送るサンプル - DRYな備忘録
+//    http://otiai10.hatenablog.com/entry/2017/06/22/023025
 messaging.setBackgroundMessageHandler((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   // Customize notification here
